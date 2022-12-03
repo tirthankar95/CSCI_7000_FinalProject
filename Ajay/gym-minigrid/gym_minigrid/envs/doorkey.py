@@ -23,23 +23,29 @@ class DoorKeyEnv(MiniGridEnv):
         self.grid.set(width - 2, height - 2, Goal())
 
         # Create a vertical splitting wall
-        splitIdx = self._rand_int(2, width-2)
+        #splitIdx = self._rand_int(2, width-2)
+        splitIdx = 2
         self.grid.vert_wall(splitIdx, 0)
 
         # Place the agent at a random position and orientation
         # on the left side of the splitting wall
-        self.place_agent(size=(splitIdx, height))
+        #self.place_agent(size=(splitIdx, height))
+        self.agent_pos = (1, 1)
+        self.agent_dir = 0
 
         # Place a door in the wall
-        doorIdx = self._rand_int(1, width-2)
+        #doorIdx = self._rand_int(1, width-2)
+        doorIdx = 2
         self.grid.set(splitIdx, doorIdx, Door('yellow', is_locked=True))
 
         # Place a yellow key on the left side
-        self.place_obj(
-            obj=Key('yellow'),
-            top=(0, 0),
-            size=(splitIdx, height)
-        )
+        #self.place_obj(
+        #    obj=Key('yellow'),
+        #    top=(0, 0),
+        #    size=(splitIdx, height)
+        #)
+        pos = np.array((1,height-2))
+        self.grid.set(*pos, Key('yellow'))
 
         self.mission = "use the key to open the door and then get to the goal"
 

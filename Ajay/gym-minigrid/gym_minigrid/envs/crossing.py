@@ -21,7 +21,7 @@ class CrossingEnv(MiniGridEnv):
         )
 
     def _gen_grid(self, width, height):
-        assert width % 2 == 1 and height % 2 == 1  # odd size
+        #assert width % 2 == 1 and height % 2 == 1  # odd size
 
         # Create an empty grid
         self.grid = Grid(width, height)
@@ -45,7 +45,9 @@ class CrossingEnv(MiniGridEnv):
         self.np_random.shuffle(rivers)
         rivers = rivers[:self.num_crossings]  # sample random rivers
         rivers_v = sorted([pos for direction, pos in rivers if direction is v])
+        rivers_v = [3]
         rivers_h = sorted([pos for direction, pos in rivers if direction is h])
+        rivers_h = [3]
         obstacle_pos = itt.chain(
             itt.product(range(1, width - 1), rivers_h),
             itt.product(rivers_v, range(1, height - 1)),

@@ -718,9 +718,9 @@ class MiniGridEnv(gym.Env):
         # Pick up an object
         pickup = 3
         # Drop an object
-        drop = 4
+        #drop = 4
         # Toggle/activate an object
-        toggle = 5
+        toggle = 4
 
         # Done completing task
         #done = 6
@@ -1249,13 +1249,13 @@ class MiniGridEnv(gym.Env):
                     self.grid.set(*fwd_pos, None)
 
         # Drop an object
-        elif action == self.actions.drop:
-            reward += -5
+        #elif action == self.actions.drop:
+        #    reward += -5
             #print("Dropped an object")
-            if not fwd_cell and self.carrying:
-                self.grid.set(*fwd_pos, self.carrying)
-                self.carrying.cur_pos = fwd_pos
-                self.carrying = None
+        #    if not fwd_cell and self.carrying:
+        #        self.grid.set(*fwd_pos, self.carrying)
+        #        self.carrying.cur_pos = fwd_pos
+        #        self.carrying = None
 
         # Toggle/activate an object
         elif action == self.actions.toggle:
@@ -1272,8 +1272,8 @@ class MiniGridEnv(gym.Env):
 
         obs = self.gen_obs()
         img = obs['image']
-        img = np.moveaxis(img,0, -1)
-        img = np.moveaxis(img, 0, -1)
+        #img = np.moveaxis(img,0, -1)
+        #img = np.moveaxis(img, 0, -1)
 
         return img, reward, done, self.agent_pos
 
