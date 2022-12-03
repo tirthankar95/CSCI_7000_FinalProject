@@ -819,6 +819,39 @@ class MiniGridEnv(gym.Env):
 
         return img
 
+    def reset_m(self):
+        # Current position and direction of the agent
+        self.agent_pos = None
+        self.agent_dir = None
+
+        # Generate a new random grid at the start of each episode
+        # To keep the same grid for each episode, call env.seed() with
+        # the same seed before calling env.reset()
+        self._gen_grid(self.width, self.height)
+
+        # These fields should be defined by _gen_grid
+        assert self.agent_pos is not None
+        assert self.agent_dir is not None
+
+        # Check that the agent doesn't overlap with an object
+        start_cell = self.grid.get(*self.agent_pos)
+        assert start_cell is None or start_cell.can_overlap()
+
+        # Item picked up, being carried, initially nothing
+        self.carrying = None
+
+        # Step count since episode start
+        self.step_count = 0
+
+        # Return first observation
+        obs = self.gen_obs()
+        #img = obs['image']
+        #img = np.moveaxis(img, 0,-1)
+        #img = np.moveaxis(img, 0, -1)
+
+        return obs
+
+
     def reset(self):
         # Current position and direction of the agent
         self.agent_pos = None
@@ -1276,6 +1309,90 @@ class MiniGridEnv(gym.Env):
         #img = np.moveaxis(img, 0, -1)
 
         return img, reward, done, self.agent_pos
+
+    def step_m(self, action):
+        self.step_count += 1
+
+        reward = 0
+        done = False
+
+        # Get the position in front of the agent
+        fwd_pos = self.front_pos
+
+        # Get the contents of the cell in front of the agent
+        fwd_cell = self.grid.get(*fwd_pos)
+
+        # Rotate left
+        if action == self.actions.left:
+            self.agent_dir -= 1
+            reward += -1
+            if self.agent_dir < 0:
+                self.agent_dir += 4
+
+        # Rotate right
+        elif action == self.actions.right:
+            reward += -1
+            self.agent_dir = (self.agent_dir + 1) % 4
+
+        # Move forward
+
+        elif action == self.actions.forward:
+            #print(self.agent_pos)
+            reward += -1
+            if fwd_cell == None or fwd_cell.can_overlap():
+                self.agent_pos = fwd_pos
+            if fwd_cell != None and fwd_cell.type == 'goal':
+                done = True
+                reward += 50
+            if fwd_cell != None and fwd_cell.type == 'lava':
+                done = True
+                reward -= 100
+            if fwd_cell != None and fwd_cell.type == 'wind':
+                print("Its Wind",fwd_cell.dir)
+                dir = DIR_TO_VEC[fwd_cell.dir]
+                self.agent_pos = self.agent_pos + (dir[0], dir[1])
+                self.agent_dir = fwd_cell.dir
+                #self.agent_dir = self._rand_int(0, 4)
+
+
+        # Pick up an object
+        elif action == self.actions.pickup:
+            reward += -5
+            #print("Picked an object")
+            if fwd_cell and fwd_cell.can_pickup():
+                if self.carrying is None:
+                    self.carrying = fwd_cell
+                    self.carrying.cur_pos = np.array([-1, -1])
+                    self.grid.set(*fwd_pos, None)
+
+        # Drop an object
+        #elif action == self.actions.drop:
+        #    reward += -5
+            #print("Dropped an object")
+        #    if not fwd_cell and self.carrying:
+        #        self.grid.set(*fwd_pos, self.carrying)
+        #        self.carrying.cur_pos = fwd_pos
+        #        self.carrying = None
+
+        # Toggle/activate an object
+        elif action == self.actions.toggle:
+            reward += -5
+            #print("Toggle the object")
+            if fwd_cell:
+                fwd_cell.toggle(self, fwd_pos)
+
+        else:
+            assert False, "unknown action"
+
+        if self.step_count >= self.max_steps*10:
+            done = True
+
+        obs = self.gen_obs()
+        #img = obs['image']
+        #img = np.moveaxis(img,0, -1)
+        #img = np.moveaxis(img, 0, -1)
+
+        return obs, reward, done, self.agent_pos
 
     def step(self, action):
         self.step_count += 1
