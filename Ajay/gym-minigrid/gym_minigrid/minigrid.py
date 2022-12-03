@@ -814,8 +814,8 @@ class MiniGridEnv(gym.Env):
         # Return first observation
         obs = self.gen_obs()
         img = obs['image']
-        img = np.moveaxis(img, 0,-1)
-        img = np.moveaxis(img, 0, -1)
+        #img = np.moveaxis(img, 0,-1)
+        #img = np.moveaxis(img, 0, -1)
 
         return img
 
@@ -1240,7 +1240,7 @@ class MiniGridEnv(gym.Env):
 
         # Pick up an object
         elif action == self.actions.pickup:
-            reward += -10
+            reward += -5
             #print("Picked an object")
             if fwd_cell and fwd_cell.can_pickup():
                 if self.carrying is None:
