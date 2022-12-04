@@ -8,6 +8,10 @@ import keras
 from keras.models import Sequential,Model
 from keras.layers import LSTM,Bidirectional,Dense,Input,Embedding,TimeDistributed
 from keras.callbacks import EarlyStopping, ModelCheckpoint
+from gym_minigrid.envs.doorkey import *
+from gym_minigrid.envs.crossing import *
+from tqdm import tqdm
+
 
 
 num_actions=5
@@ -22,10 +26,15 @@ def plotProgress(reward_plot):
 def create():
     global num_actions
     input=Input(shape=(3,147)) # (3,3,7,7) ~ the mini-grid by default returns (3,7,7) image.
-    model=LSTM(units=32,return_sequences=False)(input)
-    output=Dense(units=num_actions,activation='relu')(model)
+    model=LSTM(units=128,return_sequences=False)(input)
+    x1 = Dense(units=128, activation='relu')(model)
+    x1 = Dense(units=64, activation='relu')(x1)
+    x1 = Dense(units=32, activation='relu')(x1)
+    x1 = Dense(units=16, activation='relu')(x1)
+    output=Dense(units=num_actions,activation='linear')(x1)
     model=Model(input,output)
     return model
+
 
 def main():
     global num_actions
@@ -38,10 +47,10 @@ def main():
     epsilon_interval = (
         epsilon_max - epsilon_min
     )  # Rate at which to reduce chance of random action being taken
-    batch_size = 32  # Size of batch taken from replay buffer
-    max_steps_per_episode = 100 #beast 1000
+    batch_size = 4098  # Size of batch taken from replay buffer
+    max_steps_per_episode = 5000
 
-    env = gym.make('MiniGrid-DoorKey-6x6-v0')
+    env = DoorKeyEnv(size=6)
     env.seed(seed)
 
     model=create()
@@ -61,7 +70,7 @@ def main():
     episode_count = 0
     frame_count = 0
     # Number of frames to take random action and observe output
-    epsilon_random_frames = 1000 #beast 10000
+    epsilon_random_frames = 50000
     # Number of frames for exploration
     epsilon_greedy_frames = 1000000.0
     # Maximum replay length
@@ -75,10 +84,10 @@ def main():
     # We are taking 3 frames in our LSTM
     frame_offset=2
 
-    noOfEpisodes=10000 #beast 100000
-    while noOfEpisodes:  # Run until solved
+    noOfEpisodes=1000 #beast 100000
+    for _ in tqdm(range(noOfEpisodes)):  # Run until solved
         noOfEpisodes-=1
-        state = np.array(env.reset())
+        state = np.array(env.reset_m())
         episode_reward = 0
 
         for timestep in range(1, max_steps_per_episode):
@@ -104,7 +113,7 @@ def main():
             epsilon = max(epsilon, epsilon_min)
 
             # Apply the sampled action in our environment
-            state_next, reward, done, _ = env.step(action)
+            state_next, reward, done, _ = env.step_m(action)
             state_next = np.array(state_next)
 
             episode_reward += reward
@@ -149,6 +158,7 @@ def main():
                 
 
             if frame_count % update_target_network == 0:
+                model.save('Expert.ml')
                 # update the the target network with new weights
                 model_target.set_weights(model.get_weights())
                 # Log details
@@ -174,4 +184,4 @@ def main():
 
 if __name__ == '__main__':
     model=main()
-    model.save('Expert1.ml')
+    model.save('Expert.ml')
