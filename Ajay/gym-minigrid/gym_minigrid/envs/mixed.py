@@ -51,6 +51,7 @@ class MixedEnv(MiniGridEnv):
         # Place a door in the wall
         # doorIdx = self._rand_int(1, height - 2)
         doorIdx = 4
+        #doorIdx = self._rand_int(4,8)
         self.grid.set(splitIdx, doorIdx, Door('yellow', is_locked=True))
 
         # Place a yellow key on the left side
@@ -82,10 +83,10 @@ class MixedEnv(MiniGridEnv):
         rivers_v = sorted([pos for direction, pos in rivers if direction is v])
         rivers_h = sorted([pos for direction, pos in rivers if direction is h])
         rivers_h = [splitIdx+3]
-        rivers_v = [doorIdx+2]
+        rivers_v = [doorIdx+3]
         obstacle_pos = itt.chain(
-            itt.product(range(doorIdx+1, width - 1), rivers_h),
-            itt.product(rivers_v, range(splitIdx+1, height - 1)),
+            itt.product(range(splitIdx+1, width - 1), rivers_h),
+            itt.product(rivers_v, range(doorIdx+1, height - 1)),
         )
         #print(obstacle_pos, rivers_h,rivers_v)
         #print(self.obstacle_type)
@@ -98,8 +99,8 @@ class MixedEnv(MiniGridEnv):
         self.np_random.shuffle(path)
         #print("Split, Door",splitIdx,doorIdx)
         # Create openings
-        limits_v = [splitIdx+1] + rivers_v + [height - 1]
-        limits_h = [doorIdx] + rivers_h + [width - 1]
+        limits_v = [doorIdx+1] + rivers_v + [height - 1]
+        limits_h = [splitIdx+1] + rivers_h + [width - 1]
         #print("Limits",limits_v, limits_h,len(rivers_v), len(rivers_h))
         room_i, room_j = 0, 0
         for direction in path:
