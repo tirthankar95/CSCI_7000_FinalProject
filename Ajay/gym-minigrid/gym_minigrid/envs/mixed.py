@@ -19,14 +19,14 @@ class MixedEnv(MiniGridEnv):
             see_through_walls=False,
             seed=None
         )
-        print(self.obstacle_type,obstacle_type)
+        #print(self.obstacle_type,obstacle_type)
 
     def _gen_grid(self, width, height):
-        assert width % 2 == 1 and height % 2 == 1  # odd size
-        print(self.obstacle_type)
+        #assert width % 2 == 1 and height % 2 == 1  # odd size
+        #print(self.obstacle_type)
         # Create an empty grid
         self.grid = Grid(width, height)
-        print(width/2 - 2,height)
+        #print(width/2 - 2,height)
 
         # Generate the surrounding walls
         self.grid.wall_rect(0, 0, width, height)
@@ -39,7 +39,8 @@ class MixedEnv(MiniGridEnv):
         self.grid.set(width - 2, height - 2, Goal())
 
         # Create a vertical splitting wall
-        splitIdx = self._rand_int(2, width/2 - 2)
+        #splitIdx = self._rand_int(2, width/2 - 2)
+        splitIdx = 2
 
         self.grid.vert_wall(splitIdx, 0)
 
@@ -48,24 +49,28 @@ class MixedEnv(MiniGridEnv):
         #self.place_agent(size=(splitIdx, height))
 
         # Place a door in the wall
-        doorIdx = self._rand_int(1, height - 2)
+        # doorIdx = self._rand_int(1, height - 2)
+        doorIdx = 4
         self.grid.set(splitIdx, doorIdx, Door('yellow', is_locked=True))
 
         # Place a yellow key on the left side
-        self.place_obj(
-            obj=Key('yellow'),
-            #obj = Wind(),
-            top=(0, 0),
-            size=(splitIdx, height)
-        )
-        self.place_obj(
-            obj = Wind(1)
-        )
-        self.place_obj(
-            obj=Wind(2)
-        )
-        print(splitIdx)
+        # self.place_obj(
+        #     obj=Key('yellow'),
+        #     #obj = Wind(),
+        #     top=(0, 0),
+        #     size=(splitIdx, height)
+        # )
+        pos = np.array((1, height - 3))
+        self.grid.set(*pos, Key('yellow'))
 
+        # self.place_obj(
+        #     obj = Wind(1)
+        # )
+        # self.place_obj(
+        #     obj=Wind(2)
+        # )
+
+        #pos = np.array((splitIdx+3, doorIdx))
         # Place obstacles (lava or walls)
         v, h = object(), object()  # singleton `vertical` and `horizontal` objects
 
@@ -76,12 +81,14 @@ class MixedEnv(MiniGridEnv):
         rivers = rivers[:self.num_crossings]  # sample random rivers
         rivers_v = sorted([pos for direction, pos in rivers if direction is v])
         rivers_h = sorted([pos for direction, pos in rivers if direction is h])
+        rivers_h = [splitIdx+3]
+        rivers_v = [doorIdx+2]
         obstacle_pos = itt.chain(
             itt.product(range(doorIdx+1, width - 1), rivers_h),
             itt.product(rivers_v, range(splitIdx+1, height - 1)),
         )
-        print(obstacle_pos, rivers_h,rivers_v)
-        print(self.obstacle_type)
+        #print(obstacle_pos, rivers_h,rivers_v)
+        #print(self.obstacle_type)
         for i, j in obstacle_pos:
             #self.grid.set(i, j, self.obstacle_type())
             self.grid.set(i, j, self.obstacle_type())
@@ -89,11 +96,11 @@ class MixedEnv(MiniGridEnv):
         # Sample path to goal
         path = [h] * len(rivers_v) + [v] * len(rivers_h)
         self.np_random.shuffle(path)
-        print("Split, Door",splitIdx,doorIdx)
+        #print("Split, Door",splitIdx,doorIdx)
         # Create openings
         limits_v = [splitIdx+1] + rivers_v + [height - 1]
         limits_h = [doorIdx] + rivers_h + [width - 1]
-        print("Limits",limits_v, limits_h,len(rivers_v), len(rivers_h))
+        #print("Limits",limits_v, limits_h,len(rivers_v), len(rivers_h))
         room_i, room_j = 0, 0
         for direction in path:
             if direction is h:
