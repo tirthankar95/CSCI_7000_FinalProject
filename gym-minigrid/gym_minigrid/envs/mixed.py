@@ -103,7 +103,7 @@ class MixedEnv(MiniGridEnv):
         # Create openings
         limits_v = [doorIdx+1] + rivers_v + [height - 1]
         limits_h = [splitIdx+1] + rivers_h + [width - 1]
-        print("Limits",limits_v, limits_h,len(rivers_v), len(rivers_h))
+        #print("Limits",limits_v, limits_h,len(rivers_v), len(rivers_h))
         room_i, room_j = 0, 0
         for direction in path:
             if direction is h:
