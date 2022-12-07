@@ -9,7 +9,8 @@ class DoorKeyEnv(MiniGridEnv):
     def __init__(self, size=8):
         super().__init__(
             grid_size=size,
-            max_steps=10*size*size
+            max_steps=10*size*size,
+            seed = None
         )
 
     def _gen_grid(self, width, height):
@@ -35,7 +36,8 @@ class DoorKeyEnv(MiniGridEnv):
 
         # Place a door in the wall
         #doorIdx = self._rand_int(1, width-2)
-        doorIdx = 2
+        doorIdx = self._rand_int(1, 3)
+        #doorIdx = 2
         self.grid.set(splitIdx, doorIdx, Door('yellow', is_locked=True))
 
         # Place a yellow key on the left side
@@ -44,7 +46,8 @@ class DoorKeyEnv(MiniGridEnv):
         #    top=(0, 0),
         #    size=(splitIdx, height)
         #)
-        pos = np.array((1,height-2))
+        keyIdx = self._rand_int(3, height - 2)
+        pos = np.array((1, keyIdx))
         self.grid.set(*pos, Key('yellow'))
 
         self.mission = "use the key to open the door and then get to the goal"

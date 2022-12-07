@@ -16,15 +16,13 @@ class CrossingEnv(MiniGridEnv):
             grid_size=size,
             max_steps=4*size*size,
             # Set this to True for maximum speed
-            see_through_walls=False,
+            #see_through_walls=False,
             seed=None
         )
 
     def _gen_grid(self, width, height):
-        #assert width % 2 == 1 and height % 2 == 1  # odd size
-
-        # Create an empty grid
         self.grid = Grid(width, height)
+        # print(width/2 - 2,height)
 
         # Generate the surrounding walls
         self.grid.wall_rect(0, 0, width, height)
@@ -36,32 +34,72 @@ class CrossingEnv(MiniGridEnv):
         # Place a goal square in the bottom-right corner
         self.grid.set(width - 2, height - 2, Goal())
 
+        # Create a vertical splitting wall
+        # splitIdx = self._rand_int(2, width/2 - 2)
+        splitIdx = 2
+
+        #self.grid.vert_wall(splitIdx, 0)
+
+        # Place the agent at a random position and orientation
+        # on the left side of the splitting wall
+        # self.place_agent(size=(splitIdx, height))
+
+        # Place a door in the wall
+        # doorIdx = self._rand_int(1, height - 2)
+        # doorIdx = 2
+        doorIdx = self._rand_int(1, 3)
+        # doorIdx = self._rand_int(4,8)
+        self.grid.set(splitIdx, doorIdx, Door('yellow', is_locked=True))
+
+        # Place a yellow key on the left side
+        # self.place_obj(
+        #     obj=Key('yellow'),
+        #     #obj = Wind(),
+        #     top=(0, 0),
+        #     size=(splitIdx, height)
+        # )
+        keyIdx = self._rand_int(3, height - 2)
+        keyPos = np.array((1, keyIdx))
+        self.grid.set(*keyPos, Key('yellow'))
+
+        # self.place_obj(
+        #     obj = Wind(1)
+        # )
+        # self.place_obj(
+        #     obj=Wind(2)
+        # )
+
+        # pos = np.array((splitIdx+3, doorIdx))
         # Place obstacles (lava or walls)
         v, h = object(), object()  # singleton `vertical` and `horizontal` objects
 
         # Lava rivers or walls specified by direction and position in grid
-        rivers = [(v, i) for i in range(2, height - 2, 2)]
-        rivers += [(h, j) for j in range(2, width - 2, 2)]
+        rivers = [(v, i) for i in range(splitIdx + 2, height - 2, 2)]
+        rivers += [(h, j) for j in range(doorIdx + 2, width - 2, 2)]
         self.np_random.shuffle(rivers)
         rivers = rivers[:self.num_crossings]  # sample random rivers
         rivers_v = sorted([pos for direction, pos in rivers if direction is v])
-        rivers_v = [3]
         rivers_h = sorted([pos for direction, pos in rivers if direction is h])
-        rivers_h = [3]
+        rivers_h = [splitIdx + 3]
+        rivers_v = [doorIdx + 3]
         obstacle_pos = itt.chain(
-            itt.product(range(1, width - 1), rivers_h),
-            itt.product(rivers_v, range(1, height - 1)),
+            itt.product(range(splitIdx + 1, width - 1), rivers_h),
+            itt.product(rivers_v, range(doorIdx + 1, height - 1)),
         )
+        # print(obstacle_pos, rivers_h,rivers_v)
+        # print(self.obstacle_type)
         for i, j in obstacle_pos:
+            # self.grid.set(i, j, self.obstacle_type())
             self.grid.set(i, j, self.obstacle_type())
 
         # Sample path to goal
         path = [h] * len(rivers_v) + [v] * len(rivers_h)
         self.np_random.shuffle(path)
-
+        # print("Split, Door",splitIdx,doorIdx)
         # Create openings
-        limits_v = [0] + rivers_v + [height - 1]
-        limits_h = [0] + rivers_h + [width - 1]
+        limits_v = [doorIdx + 1] + rivers_v + [height - 1]
+        limits_h = [splitIdx + 1] + rivers_h + [width - 1]
+        print("Limits", limits_v, limits_h, len(rivers_v), len(rivers_h))
         room_i, room_j = 0, 0
         for direction in path:
             if direction is h:
@@ -83,6 +121,8 @@ class CrossingEnv(MiniGridEnv):
             if self.obstacle_type == Lava
             else "find the opening and get to the green goal square"
         )
+        self.grid.set(splitIdx, doorIdx, None)
+        self.grid.set(*keyPos, None)
 
 class LavaCrossingEnv(CrossingEnv):
     def __init__(self):

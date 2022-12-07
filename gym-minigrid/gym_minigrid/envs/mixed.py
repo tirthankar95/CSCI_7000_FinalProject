@@ -16,7 +16,7 @@ class MixedEnv(MiniGridEnv):
             grid_size=size,
             max_steps=10*size*size,
             # Set this to True for maximum speed
-            see_through_walls=False,
+            #see_through_walls=False,
             seed=None
         )
         #print(self.obstacle_type,obstacle_type)
@@ -50,7 +50,8 @@ class MixedEnv(MiniGridEnv):
 
         # Place a door in the wall
         # doorIdx = self._rand_int(1, height - 2)
-        doorIdx = 4
+        #doorIdx = 2
+        doorIdx = self._rand_int(1,3)
         #doorIdx = self._rand_int(4,8)
         self.grid.set(splitIdx, doorIdx, Door('yellow', is_locked=True))
 
@@ -61,7 +62,8 @@ class MixedEnv(MiniGridEnv):
         #     top=(0, 0),
         #     size=(splitIdx, height)
         # )
-        pos = np.array((1, height - 3))
+        keyIdx = self._rand_int(3,height - 2)
+        pos = np.array((1, keyIdx))
         self.grid.set(*pos, Key('yellow'))
 
         # self.place_obj(
@@ -101,7 +103,7 @@ class MixedEnv(MiniGridEnv):
         # Create openings
         limits_v = [doorIdx+1] + rivers_v + [height - 1]
         limits_h = [splitIdx+1] + rivers_h + [width - 1]
-        #print("Limits",limits_v, limits_h,len(rivers_v), len(rivers_h))
+        print("Limits",limits_v, limits_h,len(rivers_v), len(rivers_h))
         room_i, room_j = 0, 0
         for direction in path:
             if direction is h:
