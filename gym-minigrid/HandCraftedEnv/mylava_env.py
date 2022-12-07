@@ -46,9 +46,6 @@ class lava:
     for _ in range(self.visi,self.visi+self.size):
       for __ in range(self.visi,self.visi+self.size):
         self.grid[_][__]=self.Elements.neutral
-    self.dooriPos=np.random.randint(0,self.size)+self.visi
-    self.doorjPos=np.random.randint(0,self.size)+self.visi
-    self.grid[self.dooriPos][self.doorjPos]=self.Elements.door
     lavaCnt=math.ceil((self.size*self.size*self.difficulty)/100)
     while lavaCnt>0:
       self.lipos=np.random.randint(0,self.size)+self.visi

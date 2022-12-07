@@ -86,7 +86,6 @@ def main():
 
     noOfEpisodes=1000 #beast 100000
     for _ in tqdm(range(noOfEpisodes)):  # Run until solved
-        noOfEpisodes-=1
         state = np.array(env.reset_m())
         episode_reward = 0
 
