@@ -38,7 +38,7 @@ class doorkey:
       for __ in range(start_j,self.jpos+self.visi+1):
         obs_t.append(int(self.grid[_][__]))
       obs.append(obs_t)
-    return obs
+    return [obs]
 
   def reset_m(self):
     self.grid=[[self.Elements.block for i in range(self.size+2*self.visi)] for j in range(self.size+2*self.visi)]
@@ -116,4 +116,4 @@ def test():
     c_reward+=reward
     steps-=1
   print(c_reward)
-test()
+#test()
