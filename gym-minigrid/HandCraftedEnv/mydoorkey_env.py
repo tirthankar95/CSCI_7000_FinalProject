@@ -76,6 +76,7 @@ class doorkey:
     self.dooriPos=self.odooriPos;self.doorjPos=self.odoorjPos
     self.grid[self.keyiPos][self.keyjPos]=self.Elements.key
     self.grid[self.dooriPos][self.doorjPos]=self.Elements.door
+    self.agentMask=self.Elements.agent
     self.grid[self.ipos][self.jpos]=self.Elements.agent
     obs=self.getVision()
     return obs,0,False,(self.ipos,self.jpos)

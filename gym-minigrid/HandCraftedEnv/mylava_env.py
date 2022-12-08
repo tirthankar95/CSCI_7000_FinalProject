@@ -60,8 +60,19 @@ class lava:
         self.grid[self.ipos][self.jpos]=self.Elements.agent
         break
     obs=self.getVision()
+    self.oipos=self.ipos;self.ojpos=self.jpos
+    self.okeyiPos=self.keyiPos;self.okeyjPos=self.keyjPos 
+    self.gridOrig=self.grid
     return obs,0,False,(self.ipos,self.jpos)
 
+  def reset_prev(self):
+    self.grid=self.gridOrig
+    self.ipos=self.oipos;self.jpos=self.ojpos
+    self.grid[self.ipos][self.jpos]=self.Elements.agent
+    self.agentMask=self.Elements.agent
+    obs=self.getVision()
+    return obs,0,False,(self.ipos,self.jpos)
+    
   def __init__(self,size=4,visi=2,difficulty=10):
     self.delta=[[0,-1],[0,1],[-1,0],[1,0],[0,0]]	
     self.size=size	
