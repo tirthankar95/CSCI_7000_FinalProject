@@ -64,6 +64,7 @@ class doorkey:
     self.oipos=self.ipos;self.ojpos=self.jpos
     self.okeyiPos=self.keyiPos;self.okeyjPos=self.keyjPos 
     self.odooriPos=self.dooriPos;self.odoorjPos=self.doorjPos
+    self.agentMask=self.Elements.agent
     return obs,0,False,(self.ipos,self.jpos)
   
   def reset_prev(self):
@@ -85,7 +86,7 @@ class doorkey:
     self.delta=[[0,-1],[0,1],[-1,0],[1,0],[0,0]]
     self.size=size
     self.visi=visi
-    self.agentMask=self.Elements.agent
+    
     
   def step_m(self,action):
     reward=-1
