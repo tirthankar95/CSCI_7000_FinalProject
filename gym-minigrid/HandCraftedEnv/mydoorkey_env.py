@@ -61,6 +61,23 @@ class doorkey:
         self.grid[self.ipos][self.jpos]=self.Elements.agent
         break
     obs=self.getVision()
+    self.oipos=self.ipos;self.ojpos=self.jpos
+    self.okeyiPos=self.keyiPos;self.okeyjPos=self.keyjPos 
+    self.odooriPos=self.dooriPos;self.odoorjPos=self.doorjPos
+    return obs,0,False,(self.ipos,self.jpos)
+  
+  def reset_prev(self):
+    self.grid=[[self.Elements.block for i in range(self.size+2*self.visi)] for j in range(self.size+2*self.visi)]
+    for _ in range(self.visi,self.visi+self.size):
+      for __ in range(self.visi,self.visi+self.size):
+        self.grid[_][__]=self.Elements.neutral
+    self.ipos=self.oipos;self.jpos=self.ojpos
+    self.keyiPos=self.okeyiPos;self.keyjPos=self.okeyjPos 
+    self.dooriPos=self.odooriPos;self.doorjPos=self.odoorjPos
+    self.grid[self.keyiPos][self.keyjPos]=self.Elements.key
+    self.grid[self.dooriPos][self.doorjPos]=self.Elements.door
+    self.grid[self.ipos][self.jpos]=self.Elements.agent
+    obs=self.getVision()
     return obs,0,False,(self.ipos,self.jpos)
 
   def __init__(self,size=4,visi=2):
@@ -103,7 +120,7 @@ def test():
   numActions=5 #maximum there are 5 actions.
   env=doorkey()
   state_next, reward, done, _ =env.reset_m()
-  #env.printEnv()
+  env.printEnv()
   steps=1000
   c_reward=0
   while not done and steps>0:
@@ -116,4 +133,4 @@ def test():
     c_reward+=reward
     steps-=1
   print(c_reward)
-#test()
+# test()
