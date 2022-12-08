@@ -29,6 +29,7 @@ class lava:
     agent=4
     lava=8
     block=16
+    doorN=32 #This door will open without a key.
 
   def getVision(self):
     start_i=self.ipos-self.visi 
@@ -46,6 +47,9 @@ class lava:
     for _ in range(self.visi,self.visi+self.size):
       for __ in range(self.visi,self.visi+self.size):
         self.grid[_][__]=self.Elements.neutral
+    self.doorNiPos=np.random.randint(0,self.size)+self.visi
+    self.doorNjPos=np.random.randint(0,self.size)+self.visi
+    self.grid[self.doorNiPos][self.doorNjPos]=self.Elements.doorN
     lavaCnt=math.ceil((self.size*self.size*self.difficulty)/100)
     while lavaCnt>0:
       self.lipos=np.random.randint(0,self.size)+self.visi
@@ -60,13 +64,16 @@ class lava:
         self.grid[self.ipos][self.jpos]=self.Elements.agent
         break
     obs=self.getVision()
+    self.odoorNiPos=self.doorNiPos;self.odoorNjPos=self.doorNjPos
     self.oipos=self.ipos;self.ojpos=self.jpos
-    self.gridOrig=self.grid
+    self.gridOrig=self.grid.copy()
     self.agentMask=self.Elements.agent
     return obs,0,False,(self.ipos,self.jpos)
 
   def reset_prev(self):
-    self.grid=self.gridOrig
+    self.grid=self.gridOrig.copy()
+    self.doorNiPos=self.odoorNiPos;self.doorNjPos=self.odoorNjPos
+    self.grid[self.doorNiPos][self.doorNjPos]=self.Elements.doorN
     self.ipos=self.oipos;self.jpos=self.ojpos
     self.grid[self.ipos][self.jpos]=self.Elements.agent
     self.agentMask=self.Elements.agent

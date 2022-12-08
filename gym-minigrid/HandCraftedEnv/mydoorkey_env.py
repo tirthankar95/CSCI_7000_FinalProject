@@ -28,6 +28,7 @@ class doorkey:
     agent=4
     lava=8
     block=16
+    doorN=32 #This door will open without a key.
 
   def getVision(self):
     start_i=self.ipos-self.visi 
