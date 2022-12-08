@@ -61,7 +61,6 @@ class lava:
         break
     obs=self.getVision()
     self.oipos=self.ipos;self.ojpos=self.jpos
-    self.okeyiPos=self.keyiPos;self.okeyjPos=self.keyjPos 
     self.gridOrig=self.grid
     self.agentMask=self.Elements.agent
     return obs,0,False,(self.ipos,self.jpos)
