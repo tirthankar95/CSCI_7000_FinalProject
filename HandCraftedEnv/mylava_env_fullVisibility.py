@@ -91,8 +91,7 @@ class lava:
     ic=self.ipos+self.delta[action][0]	
     jc=self.jpos+self.delta[action][1]	
     if ic<0 or jc<0 or ic>=self.size or jc>=self.size:
-      ic=self.ipos
-      jc=self.jpos	
+      ic=self.ipos;jc=self.jpos	
     if self.Actions.pickup==action and self.grid[ic][jc]==self.Elements.key:	
       self.agentMask=(self.Elements.agent|self.Elements.key)	
     if self.grid[ic][jc]==self.Elements.door and self.agentMask==(self.Elements.agent|self.Elements.key):	
@@ -103,7 +102,8 @@ class lava:
       reward=10
     if self.grid[ic][jc]==self.Elements.lava:	
       terminate=True 	
-      reward=-10	
+      reward=-10
+    self.ipos=ic;self.jpos=jc
     self.grid[self.ipos][self.jpos]|=self.agentMask	
     obs=[self.preprocess()]	
     return obs, reward, terminate, (self.ipos,self.jpos)	
