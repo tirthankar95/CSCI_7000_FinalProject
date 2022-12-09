@@ -118,24 +118,20 @@ class lava:
     print()
 
 def test():
-  global env
   numActions=5 #maximum there are 5 actions.
+  env=lava()
+  state_next, reward, done, _ =env.reset_m()
+  #env.printEnv()
   steps=1000
   c_reward=0
-  state_next, reward, done, _ =env.reset_prev()
   while not done and steps>0:
     action=np.random.randint(0,numActions)
-    print(action)
-    print()
+    # print(action)
+    # print()
     state_next, reward, done, _ =env.step_m(action)
-    env.printEnv()
-    print()
+    # env.printEnv()
+    # print()
     c_reward+=reward
     steps-=1
   print(c_reward)
-
-env=lava(difficulty=30)
-env.reset_m()
-test()
-env.reset_prev()
-test()
+#test()
