@@ -100,7 +100,10 @@ class lava:
       self.agentMask=(self.Elements.agent|self.Elements.key)	
     if self.grid[ic][jc]==self.Elements.door and self.agentMask==(self.Elements.agent|self.Elements.key):	
       terminate=True 	
-      reward=10	
+      reward=10
+    if self.grid[ic][jc]==self.Elements.doorN:
+      terminate=True 
+      reward=10
     if self.grid[ic][jc]==self.Elements.lava:	
       terminate=True 	
       reward=-10	
