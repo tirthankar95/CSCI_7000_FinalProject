@@ -90,7 +90,7 @@ class lava:
     self.grid[self.ipos][self.jpos]&=~(self.agentMask)	
     ic=self.ipos+self.delta[action][0]	
     jc=self.jpos+self.delta[action][1]	
-    if self.grid[ic][jc]!=self.Elements.block:	
+    if ic<0 or jc<0 or ic>=self.size or jc>=self.size:
       self.ipos=ic	
       self.jpos=jc 	
     if self.Actions.pickup==action and self.grid[ic][jc]==self.Elements.key:	
