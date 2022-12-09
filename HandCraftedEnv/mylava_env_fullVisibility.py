@@ -91,8 +91,8 @@ class lava:
     ic=self.ipos+self.delta[action][0]	
     jc=self.jpos+self.delta[action][1]	
     if ic<0 or jc<0 or ic>=self.size or jc>=self.size:
-      self.ipos=ic	
-      self.jpos=jc 	
+      ic=self.ipos
+      jc=self.jpos	
     if self.Actions.pickup==action and self.grid[ic][jc]==self.Elements.key:	
       self.agentMask=(self.Elements.agent|self.Elements.key)	
     if self.grid[ic][jc]==self.Elements.door and self.agentMask==(self.Elements.agent|self.Elements.key):	
