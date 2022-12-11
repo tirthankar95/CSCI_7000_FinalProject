@@ -95,9 +95,7 @@ class MixedEnv(MiniGridEnv):
             self.grid.set(i, j, None)
 
         self.mission = (
-            "avoid the lava and get to the green goal square"
-            if self.obstacle_type == Lava
-            else "find the opening and get to the green goal square"
+            "Pickup the key, Open the door, avoid the lava and get to the goal"
         )
 
 
