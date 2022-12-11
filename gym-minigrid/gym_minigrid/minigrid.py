@@ -1343,10 +1343,10 @@ class MiniGridEnv(gym.Env):
                 self.agent_pos = fwd_pos
             if fwd_cell != None and fwd_cell.type == 'goal':
                 done = True
-                reward += 50
+                reward += 10
             if fwd_cell != None and fwd_cell.type == 'lava':
                 done = True
-                reward -= 100
+                reward -= 10
             if fwd_cell != None and fwd_cell.type == 'wind':
                 print("Its Wind",fwd_cell.dir)
                 dir = DIR_TO_VEC[fwd_cell.dir]
@@ -1357,7 +1357,7 @@ class MiniGridEnv(gym.Env):
 
         # Pick up an object
         elif action == self.actions.pickup:
-            reward += -5
+            reward += -1
             #print("Picked an object")
             if fwd_cell and fwd_cell.can_pickup():
                 if self.carrying is None:
@@ -1376,7 +1376,7 @@ class MiniGridEnv(gym.Env):
 
         # Toggle/activate an object
         elif action == self.actions.toggle:
-            reward += -5
+            reward += -1
             #print("Toggle the object")
             if fwd_cell:
                 fwd_cell.toggle(self, fwd_pos)

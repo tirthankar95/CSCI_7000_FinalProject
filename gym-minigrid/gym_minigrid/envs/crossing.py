@@ -34,33 +34,10 @@ class CrossingEnv(MiniGridEnv):
         # Place a goal square in the bottom-right corner
         self.grid.set(width - 2, height - 2, Goal())
 
-        # Create a vertical splitting wall
-        # splitIdx = self._rand_int(2, width/2 - 2)
         splitIdx = 2
 
-        #self.grid.vert_wall(splitIdx, 0)
-
-        # Place the agent at a random position and orientation
-        # on the left side of the splitting wall
-        # self.place_agent(size=(splitIdx, height))
-
-        # Place a door in the wall
-        # doorIdx = self._rand_int(1, height - 2)
-        # doorIdx = 2
         doorIdx = self._rand_int(1, 3)
-        # doorIdx = self._rand_int(4,8)
-        self.grid.set(splitIdx, doorIdx, Door('yellow', is_locked=True))
 
-        # Place a yellow key on the left side
-        # self.place_obj(
-        #     obj=Key('yellow'),
-        #     #obj = Wind(),
-        #     top=(0, 0),
-        #     size=(splitIdx, height)
-        # )
-        keyIdx = self._rand_int(3, height - 2)
-        keyPos = np.array((1, keyIdx))
-        self.grid.set(*keyPos, Key('yellow'))
 
         # self.place_obj(
         #     obj = Wind(1)
@@ -121,8 +98,6 @@ class CrossingEnv(MiniGridEnv):
             if self.obstacle_type == Lava
             else "find the opening and get to the green goal square"
         )
-        self.grid.set(splitIdx, doorIdx, None)
-        self.grid.set(*keyPos, None)
 
 class LavaCrossingEnv(CrossingEnv):
     def __init__(self):
